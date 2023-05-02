@@ -8,7 +8,7 @@ import {
   Tooltip,
 } from "react-leaflet";
 import "./map.css";
-import { useState, useEffect,useRef } from "react";
+import { useState, useEffect,useRef, useLayoutEffect} from "react";
 import Papa from "papaparse";
 import { click } from "@testing-library/user-event/dist/click";
 
@@ -57,16 +57,22 @@ function Map() {
       }
     );
   }, []);
+  
+ 
+  
+
+  
   return (
-    <MapContainer
+    <>
+    
+     <MapContainer 
       ref={map}
       id="mapid"
-      center={[14.88, -35, 76]}
-      zoom={3}
+      center={[0, 20]}
+      zoom={3.5}
       zoomSnap={0.25}
      /*  maxBounds={[
-        [-13.47, 29.3],
-        [-0.97, 40.56],
+        [[ -18.0701, 21.9999], [-13.4551, 33.7049]],
       ]} */
       scrollWheelZoom={true}
       style={{
@@ -77,6 +83,8 @@ function Map() {
       zoomControl={false}
       whenReady={(map)=>{map.target.on('click',function (e){console.log('hice click',e)})}}
     >
+      
+      
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       {checkMalawi &&
         malawi.map((dat, index) => (
@@ -108,7 +116,9 @@ function Map() {
           </Marker>
         ))}
       <LayersControl position="topright" className="mt-5">
+        
         <LayersControl.Overlay name="Zambia">
+          
           <TileLayer
             url=""
             eventHandlers={{
@@ -116,6 +126,7 @@ function Map() {
                 console.log("Added Layer:", e.target);
                 console.log("added zambia");
                 setCheckZambia(true);
+                map.current.flyToBounds([[ -18.0701, 21.9999], [-13.4551, 33.7049]], { padding: [150, 150] });
               },
               remove: (e) => {
                 console.log("Removed layer:", e.target);
@@ -134,6 +145,8 @@ function Map() {
                 console.log("Added Layer:", e.target);
                 console.log("added tanzania");
                 setCheckTanzania(true);
+                map.current.flyToBounds([[-11.7453, 29.3326], [-0.9900, 40.4676]], { padding: [150, 150] });
+
               },
               remove: (e) => {
                 console.log("Removed layer:", e.target);
@@ -151,6 +164,8 @@ function Map() {
                 console.log("Added Layer:", e.target);
                 console.log("added malawi");
                 setCheckMalawi(true);
+                map.current.flyToBounds([[-17.1350, 32.6733], [-9.3681, 35.9220]], { padding: [150, 150] });
+
               },
               remove: (e) => {
                 console.log("Removed layer:", e.target);
@@ -162,7 +177,11 @@ function Map() {
         </LayersControl.Overlay>
       </LayersControl>
       //{" "}
+      
     </MapContainer>
+    
+    </>
+   
   );
 }
 export default Map;
