@@ -59,9 +59,6 @@ function Map() {
   }, []);
   
  
-  
-
-  
   return (
     <>
     
@@ -177,7 +174,6 @@ function Map() {
         </LayersControl.Overlay>
       </LayersControl>
       //{" "}
-      
     </MapContainer>
     
     </>
