@@ -57,7 +57,30 @@ function Map() {
       }
     );
   }, []);
-  
+
+  const [markers, setMarkers] = useState([]);
+
+
+  useEffect(() => {
+    Papa.parse(
+      "https://raw.githubusercontent.com/CIAT-DAPA/aidi_network_partners/main/src/data/zambia%20-%20Copy.csv",
+      {
+        download: true,
+        header: true,
+        complete: function (results) {
+          console.log(results)
+          /* const markers = results.data.map((row) => {
+            const { name, latitude, longitude, others } = row;
+            return {
+              name,
+              position: [Number(latitude), Number(longitude)],
+              others: others.length > 0 ? others : null,
+            };
+          }); */
+        },
+      }
+    );
+  }, []);
  
   return (
     <>
