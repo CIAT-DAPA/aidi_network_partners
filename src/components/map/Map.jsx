@@ -62,7 +62,7 @@ useEffect(() => {
       }
   );
 }, []);
-
+console.log(malawi)
 useEffect(() => {
   Papa.parse(
       "https://raw.githubusercontent.com/CIAT-DAPA/aidi_network_partners/main/src/data/tanzania.csv",
