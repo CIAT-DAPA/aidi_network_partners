@@ -160,7 +160,7 @@ const hola={"type":"FeatureCollection","features":[{"type":"Feature","properties
         {checkZambia &&
         <>
         <GeoJSON data={hola.features[14].geometry} />
-        {/* {zambia.map((dato, index) => (
+        {zambia.map((dato, index) => (
           <Marker key={index} position={[dato.latitude, dato.longitude]}>
             <Tooltip direction="top" offset={[0, -30]}>
               <div>
@@ -175,7 +175,7 @@ const hola={"type":"FeatureCollection","features":[{"type":"Feature","properties
               </div>
             </Tooltip>
           </Marker>
-        ))} */}
+        ))}
         </>
 
           }
