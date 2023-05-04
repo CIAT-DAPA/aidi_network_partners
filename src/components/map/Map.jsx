@@ -72,7 +72,7 @@ function Map() {
 
 useEffect(() => {
   Papa.parse(
-      "https://raw.githubusercontent.com/CarlosNasayo/AppAfrica/main/src/data/tanzania.csv",
+      "https://raw.githubusercontent.com/CIAT-DAPA/aidi_network_partners/main/src/data/tanzania.csv",
       {
           download: true,
           header: true,
@@ -88,6 +88,7 @@ useEffect(() => {
       }
   );
 }, []);
+console.log(tanzania)
 
 const polygonCoords = [
   [-13.462067, 21.999341], // vértice 1 (esquina superior izquierda)
@@ -145,7 +146,7 @@ const hola={"type":"FeatureCollection","features":[{"type":"Feature","properties
           }
         {checkTanzania &&
         <>
-        <GeoJSON data={hola.features[14].geometry} />
+        <GeoJSON data={hola.features[5].geometry} />
         {tanzania.map((dato, index) => (
           <Marker key={index} position={[dato.latitude, dato.longitude]}>
             <Tooltip direction="top" offset={[0, -30]}>
