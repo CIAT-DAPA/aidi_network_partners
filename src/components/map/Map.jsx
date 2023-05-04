@@ -42,7 +42,7 @@ function Map() {
         download: true,
         header: true,
         complete: function (results) {
-          setZambia(results.data);
+          
         },
       }
     );
@@ -77,7 +77,7 @@ function Map() {
                     const othersArray = row.others ? row.others.split(";") : [];
                     return { ...row, others: othersArray };
                 });
-                setMarkers(data)
+                setZambia(data);
             },
         }
     );
@@ -157,7 +157,11 @@ const hola={"type":"FeatureCollection","features":[{"type":"Feature","properties
         </>
 
           }
-        {markers.map((dato, index) => (
+        
+        {checkZambia &&
+        <>
+        <GeoJSON data={hola.features[14].geometry} />
+        {zambia.map((dato, index) => (
           <Marker key={index} position={[dato.litude, dato.longitude]}>
             <Tooltip direction="top" offset={[0, -30]}>
               <div>
@@ -173,22 +177,6 @@ const hola={"type":"FeatureCollection","features":[{"type":"Feature","properties
             </Tooltip>
           </Marker>
         ))}
-        {checkZambia &&
-        <>
-        <GeoJSON data={hola.features[14].geometry} />
-        {zambia.map((dat, index) => (
-            <>
-              
-              <Marker index={index} position={[dat.latitude, dat.longitude]}>
-                <Tooltip direction="top" offset={[0, -30]}>
-                  Name: {dat.name} <br />
-                  Ohers: {dat.others}
-                  <br />
-                  <br />
-                </Tooltip>
-              </Marker>
-            </>
-          ))}
         </>
 
           }
