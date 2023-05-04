@@ -23,31 +23,7 @@ function Map() {
   const [checkTanzania, setCheckTanzania] = useState(false);
   const [checkMalawi, setCheckMalawi] = useState(false);
 
-  useEffect(() => {
-    Papa.parse(
-      "https://raw.githubusercontent.com/CarlosNasayo/AppAfrica/main/src/data/malawii.csv",
-      {
-        download: true,
-        header: true,
-        complete: function (results) {
-          setMalawi(results.data);
-        },
-      }
-    );
-  }, []);
-  useEffect(() => {
-    Papa.parse(
-      "https://raw.githubusercontent.com/CarlosNasayo/AppAfrica/main/src/data/zambia.csv",
-      {
-        download: true,
-        header: true,
-        complete: function (results) {
-          
-        },
-      }
-    );
-  }, []);
-  
+ 
 
   useEffect(() => {
     Papa.parse(
@@ -68,6 +44,24 @@ function Map() {
     );
 }, []);
 
+useEffect(() => {
+  Papa.parse(
+      "https://raw.githubusercontent.com/CIAT-DAPA/aidi_network_partners/main/src/data/malawii.csv",
+      {
+          download: true,
+          header: true,
+          delimiter: ";",
+          dynamicTyping: true,
+          complete: function (results) {
+              const data = results.data.map((row) => {
+                  const othersArray = row.others ? row.others.split(";") : [];
+                  return { ...row, others: othersArray };
+              });
+              setMalawi(data);
+          },
+      }
+  );
+}, []);
 
 useEffect(() => {
   Papa.parse(
