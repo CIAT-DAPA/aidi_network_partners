@@ -12,8 +12,9 @@ import {
 import "./map.css";
 import { useState, useEffect,useRef, useLayoutEffect} from "react";
 import Papa from "papaparse";
-import { geo } from "../../data/geo";
-
+import { zambiaGeoJson } from "../../data/zambiaGeoJson";
+import { tanzaniaGeoJson } from "../../data/tanzaniaGeoJson";
+import { malawiGeoJson } from "../../data/malawiGeoJson";
 function Map() {
   const map = useRef(null);
   const [malawi, setMalawi] = useState([]);
@@ -62,7 +63,6 @@ useEffect(() => {
       }
   );
 }, []);
-console.log(malawi)
 useEffect(() => {
   Papa.parse(
       "https://raw.githubusercontent.com/CIAT-DAPA/aidi_network_partners/main/src/data/tanzania.csv",
@@ -109,26 +109,29 @@ useEffect(() => {
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         {checkMalawi &&
         <>
-        <GeoJSON data={geo.features[3].geometry} />
-        {malawi.map((dat, index) => (
-            <>
-              
-              <Marker index={index} position={[dat.latitude, dat.longitude]}>
-                <Tooltip direction="top" offset={[0, -30]}>
-                  Name: {dat.name} <br />
-                  Ohers: {dat.others}
-                  <br />
-                  <br />
-                </Tooltip>
-              </Marker>
-            </>
-          ))}
+        <GeoJSON data={malawiGeoJson} />
+        {malawi.map((dato, index) => (
+          <Marker key={index} position={[dato.latitude, dato.longitude]}>
+            <Tooltip direction="top" offset={[0, -30]}>
+              <div>
+                <h3>{dato.name}</h3>
+
+                {dato.others.length > 0 && (
+                  <p>{dato.others.map((other) => `${other} `)}</p>
+                )}
+                {dato.__parsed_extra?.length > 0 && (
+                  <p>{dato.__parsed_extra.map((extra) => `${extra} `)}</p>
+                )}
+              </div>
+            </Tooltip>
+          </Marker>
+        ))}
         </>
 
           }
         {checkTanzania &&
         <>
-        <GeoJSON data={geo.features[5].geometry} />
+        <GeoJSON data={tanzaniaGeoJson} />
         {tanzania.map((dato, index) => (
           <Marker key={index} position={[dato.latitude, dato.longitude]}>
             <Tooltip direction="top" offset={[0, -30]}>
@@ -151,7 +154,7 @@ useEffect(() => {
         
         {checkZambia &&
         <>
-        <GeoJSON data={geo.features[14].geometry} />
+        <GeoJSON data={zambiaGeoJson} />
         {zambia.map((dato, index) => (
           <Marker key={index} position={[dato.latitude, dato.longitude]}>
             <Tooltip direction="top" offset={[0, -30]}>
