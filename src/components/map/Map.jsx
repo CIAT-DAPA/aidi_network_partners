@@ -294,7 +294,7 @@ useEffect(() => {
               eventHandlers={{
                 add: (e) => {
                   console.log("Added Layer:", e.target);
-                  console.log("added malawi");
+                  console.log("added malawii");
                   setCheckMalawi(true);
                   map.current.flyToBounds(
                     [
