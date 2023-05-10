@@ -15,6 +15,7 @@ import Papa from "papaparse";
 import { zambiaGeoJson } from "../../data/zambiaGeoJson";
 import { tanzaniaGeoJson } from "../../data/tanzaniaGeoJson";
 import { malawiGeoJson } from "../../data/malawiGeoJson";
+import React from "react";
 function Map() {
   const map = useRef(null);
   const [malawi, setMalawi] = useState([]);
@@ -40,23 +41,26 @@ function Map() {
 
   useEffect(() => {
     Papa.parse(
-        "https://raw.githubusercontent.com/CIAT-DAPA/aidi_network_partners/main/src/data/zambia%20-%20Copy.csv",
+        "https://raw.githubusercontent.com/CIAT-DAPA/aidi_network_partners/main/src/data/zambia.csv",
         {
             download: true,
             header: true,
             delimiter: ";",
             dynamicTyping: true,
             complete: function (results) {
-                const data = results.data.map((row) => {
-                    const othersArray = row.others ? row.others.split(";") : [];
-                    return { ...row, others: othersArray };
-                });
-                setZambia(data);
+              const filteredData = results.data.map(obj => {
+                if (Array.isArray(obj.__parsed_extra) && obj.__parsed_extra.includes(null)) {
+                  return { ...obj, __parsed_extra: obj.__parsed_extra.filter(item => item !== null) };
+                }
+                return obj;
+              });
+               
+                setZambia(filteredData);
             },
         }
     );
-}, []);
-
+  }, []);
+  
 
 
 useEffect(() => {
@@ -176,13 +180,21 @@ useEffect(() => {
                 <Marker position={[latitude, longitude]} key={index}>
                   {partnerInfo && (
                     <Tooltip>
-                      {`${partnerInfo.name}`}
-                      <br />
-
-                      {additionalPartnerInfo.map(
-                        (partner) => partner && ` ${partner.name}`
-                      )}
-                    </Tooltip>
+                    {`${partnerInfo.name}`}
+                    <br />
+                    {additionalPartnerInfo.map((partner, index) => (
+                      <>
+                        {partner && (
+                          <>
+                            <p>{partner.name}</p>
+                            
+                            <br />
+                          </>
+                        )}
+                      </>
+                    ))}
+                  </Tooltip>
+                  
                   )}
                 </Marker>
               );
@@ -192,22 +204,38 @@ useEffect(() => {
         {checkZambia && (
           <>
             <GeoJSON data={zambiaGeoJson} />
-            {zambia.map((dato, index) => (
-              <Marker key={index} position={[dato.latitude, dato.longitude]}>
-                <Tooltip direction="top" offset={[0, -30]}>
-                  <div>
-                    <h3>{dato.name}</h3>
+            {zambia.map((obj, index) => {
+              const { latitude, longitude, partners, __parsed_extra } = obj;
 
-                    {dato.others.length > 0 && (
-                      <p>{dato.others.map((other) => `${other} `)}</p>
-                    )}
-                    {dato.__parsed_extra?.length > 0 && (
-                      <p>{dato.__parsed_extra.map((extra) => `${extra} `)}</p>
-                    )}
-                  </div>
-                </Tooltip>
-              </Marker>
-            ))}
+              // Busca la información del primer arreglo basada en el ID de "partners"
+              const partnerInfo = arrayPartners.find(
+                (item) => item.id === partners
+              );
+              const additionalPartnerInfo = __parsed_extra.map((id) =>
+                arrayPartners.find((item) => item.id === id)
+              );
+
+              return (
+                <Marker position={[latitude, longitude]} key={index}>
+                  {partnerInfo && (
+                    <Tooltip>
+                      {`${partnerInfo.name}`}
+                      <br />
+
+                      {additionalPartnerInfo.map(
+                        (partner, index) =>
+                          partner && (
+                            <React.Fragment key={index}>
+                              {partner.name}
+                              <br />
+                            </React.Fragment>
+                          )
+                      )}
+                    </Tooltip>
+                  )}
+                </Marker>
+              );
+            })}
           </>
         )}
         <LayersControl position="topright" className="mt-5">
