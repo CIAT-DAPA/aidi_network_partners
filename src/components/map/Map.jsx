@@ -23,7 +23,6 @@ function Map() {
   const [checkZambia, setCheckZambia] = useState(false);
   const [checkTanzania, setCheckTanzania] = useState(false);
   const [checkMalawi, setCheckMalawi] = useState(false);
-  const [pru, setPru] = useState([]);
   const [arrayPartners, setArrayPartners] = useState([]);
   
 
@@ -70,35 +69,19 @@ useEffect(() => {
           delimiter: ";",
           dynamicTyping: true,
           complete: function (results) {
-           console.log(results)
-              const data = results.data.map((row) => {
-                  /* const othersArray = row.partners? row.partners.split(";") : [];
-                  return { ...row, partners: othersArray }; */
-              });
-              setPru(results.data);
+            const filteredData = results.data.map(obj => {
+              if (Array.isArray(obj.__parsed_extra) && obj.__parsed_extra.includes(null)) {
+                return { ...obj, __parsed_extra: obj.__parsed_extra.filter(item => item !== null) };
+              }
+              return obj;
+            });
+             
+              setMalawi(filteredData);
           },
       }
   );
 }, []);
-console.log(pru)
-useEffect(() => {
-  Papa.parse(
-      "https://raw.githubusercontent.com/CIAT-DAPA/aidi_network_partners/main/src/data/malawii.csv",
-      {
-          download: true,
-          header: true,
-          delimiter: ";",
-          dynamicTyping: true,
-          complete: function (results) {
-              const data = results.data.map((row) => {
-                  const othersArray = row.others ? row.others.split(";") : [];
-                  return { ...row, others: othersArray };
-              });
-              setMalawi(data);
-          },
-      }
-  );
-}, []);
+
 useEffect(() => {
   Papa.parse(
       "https://raw.githubusercontent.com/CIAT-DAPA/aidi_network_partners/main/src/data/tanzania.csv",
@@ -141,76 +124,81 @@ useEffect(() => {
           });
         }}
       >
-
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-        {checkMalawi &&
-        <>
-        <GeoJSON data={malawiGeoJson} />
-        {malawi.map((dato, index) => (
-          <Marker key={index} position={[dato.latitude, dato.longitude]}>
-            <Tooltip direction="top" offset={[0, -30]}>
-              <div>
-                <h3>{dato.name}</h3>
+        {checkMalawi && (
+          <>
+            <GeoJSON data={malawiGeoJson} />
+            {malawi.map((obj, index) => {
+              const { latitude, longitude, partners, __parsed_extra } = obj;
 
-                {dato.others.length > 0 && (
-                  <p>{dato.others.map((other) => `${other} `)}</p>
-                )}
-                {dato.__parsed_extra?.length > 0 && (
-                  <p>{dato.__parsed_extra.map((extra) => `${extra} `)}</p>
-                )}
-              </div>
-            </Tooltip>
-          </Marker>
-        ))}
-        </>
+              // Busca la información del primer arreglo basada en el ID de "partners"
+              const partnerInfo = arrayPartners.find(
+                (item) => item.id === partners
+              );
+              const additionalPartnerInfo = __parsed_extra.map((id) =>
+                arrayPartners.find((item) => item.id === id)
+              );
+              console.log(partnerInfo);
 
-          }
-        {checkTanzania &&
-        <>
-        <GeoJSON data={tanzaniaGeoJson} />
-        {tanzania.map((dato, index) => (
-          <Marker key={index} position={[dato.latitude, dato.longitude]}>
-            <Tooltip direction="top" offset={[0, -30]}>
-              <div>
-                <h3>{dato.name}</h3>
+              return (
+                <Marker position={[latitude, longitude]} key={index}>
+                  {partnerInfo && (
+                    <Tooltip>
+                      {`${partnerInfo.name}`}
+                      <br />
 
-                {dato.others.length > 0 && (
-                  <p>{dato.others.map((other) => `${other} `)}</p>
-                )}
-                {dato.__parsed_extra?.length > 0 && (
-                  <p>{dato.__parsed_extra.map((extra) => `${extra} `)}</p>
-                )}
-              </div>
-            </Tooltip>
-          </Marker>
-        ))}
-        </>
+                      {additionalPartnerInfo.map(
+                        (partner) => partner && ` ${partner.name}`
+                      )}
+                    </Tooltip>
+                  )}
+                </Marker>
+              );
+            })}
+          </>
+        )}
+        {checkTanzania && (
+          <>
+            <GeoJSON data={tanzaniaGeoJson} />
+            {tanzania.map((dato, index) => (
+              <Marker key={index} position={[dato.latitude, dato.longitude]}>
+                <Tooltip direction="top" offset={[0, -30]}>
+                  <div>
+                    <h3>{dato.name}</h3>
 
-          }
-        
-        {checkZambia &&
-        <>
-        <GeoJSON data={zambiaGeoJson} />
-        {zambia.map((dato, index) => (
-          <Marker key={index} position={[dato.latitude, dato.longitude]}>
-            <Tooltip direction="top" offset={[0, -30]}>
-              <div>
-                <h3>{dato.name}</h3>
+                    {dato.others.length > 0 && (
+                      <p>{dato.others.map((other) => `${other} `)}</p>
+                    )}
+                    {dato.__parsed_extra?.length > 0 && (
+                      <p>{dato.__parsed_extra.map((extra) => `${extra} `)}</p>
+                    )}
+                  </div>
+                </Tooltip>
+              </Marker>
+            ))}
+          </>
+        )}
+        {checkZambia && (
+          <>
+            <GeoJSON data={zambiaGeoJson} />
+            {zambia.map((dato, index) => (
+              <Marker key={index} position={[dato.latitude, dato.longitude]}>
+                <Tooltip direction="top" offset={[0, -30]}>
+                  <div>
+                    <h3>{dato.name}</h3>
 
-                {dato.others.length > 0 && (
-                  <p>{dato.others.map((other) => `${other} `)}</p>
-                )}
-                {dato.__parsed_extra?.length > 0 && (
-                  <p>{dato.__parsed_extra.map((extra) => `${extra} `)}</p>
-                )}
-              </div>
-            </Tooltip>
-          </Marker>
-        ))}
-        </>
-
-          }
-           
+                    {dato.others.length > 0 && (
+                      <p>{dato.others.map((other) => `${other} `)}</p>
+                    )}
+                    {dato.__parsed_extra?.length > 0 && (
+                      <p>{dato.__parsed_extra.map((extra) => `${extra} `)}</p>
+                    )}
+                  </div>
+                </Tooltip>
+              </Marker>
+            ))}
+          </>
+        )}
         <LayersControl position="topright" className="mt-5">
           <LayersControl.Overlay name="Zambia">
             <TileLayer
@@ -287,21 +275,6 @@ useEffect(() => {
           </LayersControl.Overlay>
         </LayersControl>
         //{" "}
-        {/* {pru.map(obj => {
-        const { latitude, longitude, partners } = obj;
-
-        // Busca la información del primer arreglo basada en el ID de "partners"
-        const partnerInfo = arrayPartners.find(item => item.id === partners);
-        console.log(partnerInfo)
-        
-        return (
-          <Marker position={[latitude, longitude]} key={partners}>
-            {partnerInfo && (
-              <Tooltip>{`Partner: ${partnerInfo.name}`}</Tooltip>
-            )}
-          </Marker>
-        );
-      })} */}
       </MapContainer>
     </>
   );
