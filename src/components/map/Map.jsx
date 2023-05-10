@@ -23,8 +23,22 @@ function Map() {
   const [checkZambia, setCheckZambia] = useState(false);
   const [checkTanzania, setCheckTanzania] = useState(false);
   const [checkMalawi, setCheckMalawi] = useState(false);
+  const [pru, setPru] = useState([]);
+  const [arrayPartners, setArrayPartners] = useState([]);
+  
 
- 
+
+  useEffect(() => {
+    Papa.parse('https://raw.githubusercontent.com/CIAT-DAPA/aidi_network_partners/main/src/data/partners.csv', {
+      download: true,
+      header: true,
+      dynamicTyping: true,
+      complete: (results) => {
+        setArrayPartners(results.data);
+      },
+    });
+  }, []);
+ console.log(arrayPartners)
 
   useEffect(() => {
     Papa.parse(
@@ -45,6 +59,28 @@ function Map() {
     );
 }, []);
 
+
+
+useEffect(() => {
+  Papa.parse(
+      "https://raw.githubusercontent.com/CIAT-DAPA/aidi_network_partners/main/src/data/malawii%20-%20copia.csv",
+      {
+          download: true,
+          header: true,
+          delimiter: ";",
+          dynamicTyping: true,
+          complete: function (results) {
+           console.log(results)
+              const data = results.data.map((row) => {
+                  /* const othersArray = row.partners? row.partners.split(";") : [];
+                  return { ...row, partners: othersArray }; */
+              });
+              setPru(results.data);
+          },
+      }
+  );
+}, []);
+console.log(pru)
 useEffect(() => {
   Papa.parse(
       "https://raw.githubusercontent.com/CIAT-DAPA/aidi_network_partners/main/src/data/malawii.csv",
@@ -174,6 +210,7 @@ useEffect(() => {
         </>
 
           }
+           
         <LayersControl position="topright" className="mt-5">
           <LayersControl.Overlay name="Zambia">
             <TileLayer
@@ -250,6 +287,21 @@ useEffect(() => {
           </LayersControl.Overlay>
         </LayersControl>
         //{" "}
+        {/* {pru.map(obj => {
+        const { latitude, longitude, partners } = obj;
+
+        // Busca la información del primer arreglo basada en el ID de "partners"
+        const partnerInfo = arrayPartners.find(item => item.id === partners);
+        console.log(partnerInfo)
+        
+        return (
+          <Marker position={[latitude, longitude]} key={partners}>
+            {partnerInfo && (
+              <Tooltip>{`Partner: ${partnerInfo.name}`}</Tooltip>
+            )}
+          </Marker>
+        );
+      })} */}
       </MapContainer>
     </>
   );
