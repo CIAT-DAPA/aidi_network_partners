@@ -37,7 +37,6 @@ function Map() {
       },
     });
   }, []);
- console.log(arrayPartners)
 
   useEffect(() => {
     Papa.parse(
@@ -62,7 +61,7 @@ function Map() {
 
 useEffect(() => {
   Papa.parse(
-      "https://raw.githubusercontent.com/CIAT-DAPA/aidi_network_partners/main/src/data/malawii%20-%20copia.csv",
+      "https://raw.githubusercontent.com/CIAT-DAPA/aidi_network_partners/main/src/data/malawi%20.csv",
       {
           download: true,
           header: true,
@@ -103,7 +102,6 @@ useEffect(() => {
       }
   );
 }, []);
-console.log(tanzania)
   return (
     <>
       <MapContainer
@@ -142,7 +140,6 @@ console.log(tanzania)
               const additionalPartnerInfo = __parsed_extra.map((id) =>
                 arrayPartners.find((item) => item.id === id)
               );
-              console.log(partnerInfo);
 
               return (
                 <Marker position={[latitude, longitude]} key={index}>
@@ -174,7 +171,6 @@ console.log(tanzania)
               const additionalPartnerInfo = __parsed_extra.map((id) =>
                 arrayPartners.find((item) => item.id === id)
               );
-              console.log(partnerInfo);
 
               return (
                 <Marker position={[latitude, longitude]} key={index}>
